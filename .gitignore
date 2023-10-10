@@ -21,6 +21,7 @@ venv
 docs.zip
 archive.zip
 rest-api.iml
+.tox
 
 # vim temporary files
 *~
