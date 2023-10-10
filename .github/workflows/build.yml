@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
       
       - name: Setup Python
-        uses: actions/setup-python@3
+        uses: actions/setup-python@2
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
