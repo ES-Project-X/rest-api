@@ -1,8 +1,3 @@
-filterLabels:
-  # Run
-  include:
-    - ES-
-
 # Set to true to add reviewers to pull requests
 addReviewers: true
 
