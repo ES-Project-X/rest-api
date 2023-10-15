@@ -2,3 +2,4 @@ fastapi~=0.103.2
 httpx
 uvicorn~=0.23.2
 sqlalchemy
+psycopg2-binary

@@ -4,6 +4,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+from dotenv import load_dotenv
+
+env_path = os.path.join(os.path.dirname(__file__), '..', '.env')
+load_dotenv(env_path)
+
 # Use the environment variables from the .env file
 POSTGRES_DB = os.environ.get("POSTGRES_DB", "mydatabase")
 POSTGRES_USER = os.environ.get("POSTGRES_USER", "myuser")

@@ -50,6 +50,7 @@ class Point(Base):
 class POI(Point):
     __tablename__ = "pois"
 
+    id = Column(Integer, ForeignKey("points.id"), primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
     type = Column(String, nullable=False)

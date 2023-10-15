@@ -1,6 +1,12 @@
 from fastapi import FastAPI
+import app.models as models, app.schemas as schemas, app.crud as crud
+from app.database import SessionLocal, engine
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+print()
 
 
 @app.get("/")
