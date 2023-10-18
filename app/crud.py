@@ -16,7 +16,7 @@ def create_user(db: Session, user: schemas.UserCreate):
         db.refresh(db_user)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-    return db_user
+    return {"message": "User created successfully"}
 
 def get_user(db: Session, id: str):
     db_user = db.query(models.User).filter(models.User.id == id).first()
