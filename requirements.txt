@@ -3,5 +3,5 @@ httpx
 uvicorn~=0.23.2
 sqlalchemy
 psycopg2-binary
-dotenv
+python-dotenv
 tox
