@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 import app.models as models, app.schemas as schemas
 from fastapi import HTTPException
-from uuid import uuid4
 
 def create_user(db: Session, user: schemas.UserCreate):
     db_user = models.User(email=user.email,
@@ -20,6 +19,12 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 def get_user(db: Session, id: str):
     db_user = db.query(models.User).filter(models.User.id == id).first()
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+def get_user_by_email(db: Session, email: str):
+    db_user = db.query(models.User).filter(models.User.email == email).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user

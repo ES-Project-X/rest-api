@@ -25,8 +25,8 @@ route_status = Table("route_status", Base.metadata,
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(UUID, primary_key=True, index=True, default=uuid4())
-    email = Column(String, unique=True, nullable=False)
+    id = Column(UUID, primary_key=True, index=True, default=uuid4)
+    email = Column(String, unique=True, index=True, nullable=False)
     username = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
     first_name = Column(String, nullable=False)
@@ -42,9 +42,9 @@ class User(Base):
 class Point(Base):
     __tablename__ = "points"
 
-    id = Column(UUID, primary_key=True, index=True, default=uuid4())
-    latitude = Column(Float, nullable=False)
-    longitude = Column(Float, nullable=False)
+    id = Column(UUID, primary_key=True, index=True, default=uuid4)
+    latitude = Column(Float, nullable=False, index=True)
+    longitude = Column(Float, nullable=False, index=True)
     routes = relationship("Route", secondary=route_point, back_populates="points")
 
 class POI(Point):
@@ -63,7 +63,7 @@ class POI(Point):
 class UserPOI(Base):
     __tablename__ = "user_poi"
 
-    id = Column(UUID, primary_key=True, index=True, default=uuid4())
+    id = Column(UUID, primary_key=True, index=True, default=uuid4)
     user_id = Column(UUID, ForeignKey("users.id"), nullable=False, index=True)
     poi_id = Column(UUID, ForeignKey("pois.id"), nullable=False, index=True)
     rating = Column(Boolean, nullable=False)
@@ -72,7 +72,7 @@ class UserPOI(Base):
 class Status(Base):
     __tablename__ = "status"
 
-    id = Column(UUID, primary_key=True, index=True, default=uuid4())
+    id = Column(UUID, primary_key=True, index=True, default=uuid4)
     date = Column(DateTime, nullable=False, default=date.today())
     balance = Column(Integer, nullable=False, default=0)
     pois = relationship("POI", secondary=poi_status, back_populates="status_history")
@@ -81,7 +81,7 @@ class Status(Base):
 class Route(Base):
     __tablename__ = "routes"
 
-    id = Column(UUID, primary_key=True, index=True, default=uuid4())
+    id = Column(UUID, primary_key=True, index=True, default=uuid4)
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
     added_by = Column(UUID, ForeignKey("users.id"), nullable=False, index=True)
@@ -94,7 +94,7 @@ class Route(Base):
 class UserRoute(Base):
     __tablename__ = "user_route"
 
-    id = Column(UUID, primary_key=True, index=True, default=uuid4())
+    id = Column(UUID, primary_key=True, index=True, default=uuid4)
     user_id = Column(UUID, ForeignKey("users.id"), nullable=False, index=True)
     route_id = Column(UUID, ForeignKey("routes.id"), nullable=False, index=True)
     rating = Column(Boolean, nullable=False)
