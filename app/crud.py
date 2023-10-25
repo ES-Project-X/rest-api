@@ -100,6 +100,25 @@ def get_poi(db: Session, id: str):
         raise HTTPException(status_code=404, detail="POI not found")
     return db_poi
 
+
+def filter_pois(db: Session, coords: list[float], type: list[str], name: str):
+
+    if type is not None:
+        db_pois = db.query(models.POI).filter(models.POI.type.in_(type))
+    else:
+        return []
+    
+    if coords is not None:
+        db_pois = db_pois.filter(models.POI.latitude >= coords[0],
+                                              models.POI.latitude <= coords[1],
+                                              models.POI.longitude >= coords[2],
+                                              models.POI.longitude <= coords[3])
+
+    if name is not None:
+        db_pois = db_pois.filter(models.POI.name.contains(name))
+
+    return db_pois.all()
+
 def edit_poi(db: Session, poi: schemas.POIEdit):
     db_poi = db.query(models.POI).filter(models.POI.id == poi.id).first()
 
