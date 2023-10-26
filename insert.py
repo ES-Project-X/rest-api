@@ -3,8 +3,6 @@ import app.crud as crud
 import app.schemas as schemas
 import app.models as models
 
-import requests
-
 models.Base.metadata.create_all(bind=engine)
 
 def insert_data():
