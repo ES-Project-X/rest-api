@@ -77,6 +77,8 @@ def insert_data():
     db.close()
 
 insert_data()
+
+print("==== Data inserted ====")
     
 
     
