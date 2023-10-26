@@ -54,6 +54,8 @@ async def get_poi(id: str, db: Session = Depends(get_db)):
 async def get_pois(max_lat: list[float] = Query(None), min_lat: list[float] = Query(None), max_lng: list[float] = Query(None), min_lng: list[float] = Query(None), db: Session = Depends(get_db)):
     # receive cluster by query params
     clusters = []
+    if max_lat is None or min_lat is None or max_lng is None or min_lng is None:
+        raise HTTPException(status_code=400, detail="Invalid cluster format")
     if len(max_lat) != len(min_lat) or len(max_lat) != len(max_lng) or len(max_lat) != len(min_lng):
         raise HTTPException(status_code=400, detail="Invalid cluster format")
     for i in range(len(max_lat)):
