@@ -54,3 +54,6 @@ class UserRouteBase(BaseModel):
 
 class UserRouteManage(UserRouteBase):
     rating: bool
+
+class ClusterRequest(BaseModel):
+    clusters: list[list[float]] = None

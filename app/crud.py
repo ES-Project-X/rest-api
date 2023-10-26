@@ -101,23 +101,33 @@ def get_poi(db: Session, id: str):
     return db_poi
 
 
-def filter_pois(db: Session, coords: list[float], type: list[str], name: str):
+def get_pois_by_cluster(db: Session, clusters: list[list[float]]):
+    # receive in format [max_lat, min_lat, max_long, min_long]
 
-    if type is not None:
-        db_pois = db.query(models.POI).filter(models.POI.type.in_(type))
-    else:
-        return []
+    if clusters is None:
+        return db.query(models.POI).all()
     
-    if coords is not None:
-        db_pois = db_pois.filter(models.POI.latitude >= coords[0],
-                                              models.POI.latitude <= coords[1],
-                                              models.POI.longitude >= coords[2],
-                                              models.POI.longitude <= coords[3])
-
-    if name is not None:
-        db_pois = db_pois.filter(models.POI.name.contains(name))
-
-    return db_pois.all()
+    db_pois = []
+    
+    for cluster in clusters:
+        if len(cluster) != 4:
+            raise HTTPException(status_code=400, detail="Invalid cluster format")
+        
+        if cluster[0] < cluster[1] or cluster[2] < cluster[3]:
+            raise HTTPException(status_code=400, detail="Invalid cluster format")
+        
+        if cluster[0] > 90 or cluster[0] < -90 or cluster[1] > 90 or cluster[1] < -90:
+            raise HTTPException(status_code=400, detail="Invalid cluster format")
+        
+        if cluster[2] > 180 or cluster[2] < -180 or cluster[3] > 180 or cluster[3] < -180:
+            raise HTTPException(status_code=400, detail="Invalid cluster format")
+        
+        db_pois += db.query(models.POI).filter(models.POI.latitude <= cluster[0],
+                                               models.POI.latitude >= cluster[1],
+                                               models.POI.longitude <= cluster[2],
+                                               models.POI.longitude >= cluster[3]).all()
+        
+    return db_pois
 
 def edit_poi(db: Session, poi: schemas.POIEdit):
     db_poi = db.query(models.POI).filter(models.POI.id == poi.id).first()
