@@ -1,8 +1,12 @@
 from fastapi import FastAPI, Depends, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_cognito import CognitoToken
+
+from sqlalchemy.orm import Session
+
 import app.models as models, app.schemas as schemas, app.crud as crud
 from app.database import SessionLocal, engine
-from sqlalchemy.orm import Session
+from app.cognito import cognito_eu
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -28,6 +32,32 @@ def get_db():
 @app.get("/")
 async def root():
     return {"message": "Sup N*ggas"}
+
+@app.get("/test-cognito-auth")
+async def test_cognito_auth(token: CognitoToken = Depends(cognito_eu.auth_required)):
+    """
+    Notas:
+    - Basta colocar o argumento "token" desta forma para que seja verificada a autenticação.
+    - No cognito.py está a configuração do "cognito_eu", que é importado e usado aqui.
+    - Passar o JWT token (access_token) no header "Authorization" com o prefixo "Bearer " (Authorization: Bearer <access_token>).
+    - Conteúdo do token:
+    {
+        "origin_jti": null,
+        "sub": "1cfd853e-f2e8-4db9-9b3c-5b20070e2dd9",
+        "event_id": "ee5fed89-4b6d-4e9c-9fd9-0a549aa88395",
+        "token_use": "access",
+        "scope": "openid email",
+        "auth_time": 1698877020,
+        "iss": "https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_EQGJijkpw",
+        "exp": 1698880620,
+        "iat": 1698877020,
+        "jti": "6b6d8b93-b2b8-4d4c-965a-28732fd44ebb",
+        "client_id": "2gcaba1b91t1gfnhofgna0g63o",
+        "username": "1cfd853e-f2e8-4db9-9b3c-5b20070e2dd9"
+    }
+    - "username" é a referência para o utilizador no Cognito (possui email, family_name e given_name).
+    """
+    return token
 
 @app.post("/register")
 async def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
