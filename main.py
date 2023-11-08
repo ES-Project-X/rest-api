@@ -12,7 +12,7 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-origins = [os.environ.get("FRONTEND_URL", "http://localhost:3000")]
+origins = [os.environ.get("FRONTEND_URL")]
 
 app.add_middleware(
     CORSMiddleware,
