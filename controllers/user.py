@@ -3,16 +3,17 @@ from sqlalchemy.orm import Session
 from crud import user as crud_user
 from app.database import get_db
 import app.schemas as schemas
+from app.cognito import get_current_user
 
 router = APIRouter(prefix="/user", tags=["user"])
 
-@router.get("/{id}}")
-async def get_user(id: str, db: Session = Depends(get_db)):
+@router.get("")
+async def get_user(current_user: schemas.UserBase = Depends(get_current_user), db: Session = Depends(get_db)):
     # receive user id by query params
-    return crud_user.get_user(db, id)
+    return crud_user.get_user(db, current_user.email)
 
-@router.put("/edit/{id}")
-async def edit_user(id: str, user: schemas.UserEdit, db: Session = Depends(get_db)):
+@router.put("/edit")
+async def edit_user(user: schemas.UserEdit, current_user: schemas.UserBase = Depends(get_current_user), db: Session = Depends(get_db)):
     # receive user id by query params
     # receive user data by body raw json
-    return crud_user.edit_user(db, id, user)
+    return crud_user.edit_user(db, current_user.email, user)

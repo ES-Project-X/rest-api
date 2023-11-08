@@ -55,4 +55,3 @@ async def test_cognito_auth(token: CognitoToken = Depends(cognito_eu.auth_requir
     - "username" é a referência para o utilizador no Cognito (possui email, family_name e given_name).
     """
     return token
-

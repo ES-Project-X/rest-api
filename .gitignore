@@ -22,6 +22,7 @@ archive.zip
 rest-api.iml
 .tox
 .env
+.aws
 
 # vim temporary files
 *~
