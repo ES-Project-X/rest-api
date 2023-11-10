@@ -5,7 +5,7 @@ from pydantic.types import Any
 from dotenv import load_dotenv
 import os
 
-env_path = os.path.join(os.path.dirname(__file__), '..', '.aws')
+env_path = os.path.join(os.path.dirname(__file__), '..', '.env')
 load_dotenv(env_path)
 
 userpool_id = str(os.environ.get("COGNITO_USERPOLL_ID"))
