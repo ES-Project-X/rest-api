@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 import app.models as models, app.schemas as schemas
 from fastapi import HTTPException
+from datetime import datetime, timedelta
 
 def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
     db_poi = models.POI(latitude=poi.latitude,
@@ -79,3 +80,43 @@ def remove_poi(db: Session, id: str):
     db.delete(db_poi)
     db.commit()
     return db_poi
+
+def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
+    db_poi = db.query(models.POI).filter(models.POI.id == id).first()
+    if db_poi is None:
+        raise HTTPException(status_code=404, detail="POI not found")
+    
+    db_user_poi = db.query(models.UserPOI).filter(models.UserPOI.user_id == user_id, models.UserPOI.poi_id == id).first()
+    if db_user_poi is not None:
+        if datetime.now() - db_user_poi.status_cooldown < timedelta(hours=72):
+            raise HTTPException(status_code=429, detail=f"{72 - (datetime.now() - db_user_poi.status_cooldown).seconds // 3600}")
+        else:
+            if rating != db_user_poi.rating:
+                db_user_poi.rating = rating
+                db_user_poi.status_cooldown = datetime.now()
+                if rating:
+                    db_poi.rating_positive += 1
+                    db_poi.rating_negative -= 1
+                else:
+                    db_poi.rating_positive -= 1
+                    db_poi.rating_negative += 1
+    else:
+        db_user_poi = models.UserPOI(user_id=user_id, poi_id=id, rating=rating)
+        db_user = db.query(models.User).filter(models.User.id == user_id).first()
+        db_user.given_ratings_count += 1
+        if rating:
+            db_poi.rating_positive += 1
+        else:
+            db_poi.rating_negative += 1
+        db.add(db_user_poi)
+
+    try:
+        db.commit()
+        db.refresh(db_poi)
+        db.refresh(db_user)
+        db.refresh(db_user_poi)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return db_poi
+    

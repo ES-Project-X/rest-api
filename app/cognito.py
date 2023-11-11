@@ -3,6 +3,9 @@ from fastapi import Depends
 from pydantic_settings import BaseSettings
 from pydantic.types import Any
 from dotenv import load_dotenv
+from sqlalchemy.orm import Session
+from app.database import get_db
+import app.models as models
 import os
 
 env_path = os.path.join(os.path.dirname(__file__), '..', '.env')
@@ -28,5 +31,5 @@ cognito_eu = CognitoAuth(
     settings = CognitoSettings.from_global_settings(settings), userpool_name="eu"
 )
     
-def get_current_user(token: CognitoToken = Depends(cognito_eu.auth_required)):
-    return token.username
+def get_current_user(token: CognitoToken = Depends(cognito_eu.auth_required), db: Session = Depends(get_db)) -> str:
+    return db.query(models.User).filter(models.User.cognito_username == token.username).first().id

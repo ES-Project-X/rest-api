@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, Date, DateTime, Float, UUID, Boolean
 from sqlalchemy.orm import relationship
 from app.database import Base
-from datetime import date
+from datetime import date, datetime
 from uuid import uuid4
 
 # TODO: Implement cascade(?)
@@ -26,9 +26,9 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(UUID, primary_key=True, index=True, default=uuid4)
-    email = Column(String, unique=True, index=True, nullable=False)
+    email = Column(String, unique=True, nullable=False)
     username = Column(String, unique=True, nullable=False)
-    password = Column(String, nullable=False)
+    cognito_username = Column(String, unique=True, nullable=False, index=True)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     image_url = Column(String, default="")
@@ -67,7 +67,7 @@ class UserPOI(Base):
     user_id = Column(UUID, ForeignKey("users.id"), nullable=False, index=True)
     poi_id = Column(UUID, ForeignKey("pois.id"), nullable=False, index=True)
     rating = Column(Boolean, nullable=False)
-    status_cooldown = Column(DateTime, nullable=False)
+    status_cooldown = Column(DateTime, nullable=False, default=datetime.now())
 
 class Status(Base):
     __tablename__ = "status"

@@ -4,7 +4,7 @@ from fastapi import HTTPException
 
 def create_user(db: Session, user: schemas.UserCreate):
     db_user = models.User(email=user.email,
-                          password=user.password,
+                          cognito_username=user.cognito_username,
                           username=user.username,
                           first_name=user.first_name,
                           last_name=user.last_name,
@@ -23,11 +23,11 @@ def get_user(db: Session, id: str):
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
-def get_user_by_email(db: Session, email: str):
-    db_user = db.query(models.User).filter(models.User.email == email).first()
+def get_user_id_by_cognito_username(db: Session, cognito_username: str):
+    db_user = db.query(models.User).filter(models.User.cognito_username == cognito_username).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    return db_user
+    return db_user.id
 
 def edit_user(db: Session, id: str, user: schemas.UserEdit):
     db_user = db.query(models.User).filter(models.User.id == id).first()
@@ -55,8 +55,8 @@ def edit_user(db: Session, id: str, user: schemas.UserEdit):
         
         db_user.username = user.username
 
-    if user.password is not None:
-        db_user.password = user.password
+    if user.password is not None: # to be implemented in cognito
+        pass
 
     if user.first_name is not None:
         db_user.first_name = user.first_name

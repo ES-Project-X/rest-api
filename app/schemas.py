@@ -8,7 +8,7 @@ class UserLogin(UserBase):
 
 class UserCreate(UserBase):
     username: str
-    password: str
+    cognito_username: str
     first_name: str
     last_name: str
     birth_date: str
@@ -17,6 +17,7 @@ class UserEdit(UserBase):
     email: str = None
     username: str = None
     password: str = None
+    new_password: str = None
     first_name: str = None
     last_name: str = None
     image_url: str = None
@@ -35,6 +36,10 @@ class POIEdit(BaseModel):
     id: str
     description: str = None
     picture_url: str = None
+
+class POIRateExistence(BaseModel):
+    id: str
+    rating: bool
 
 class UserPOIBase(BaseModel):
     poi_id: str

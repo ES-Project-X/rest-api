@@ -10,24 +10,26 @@ def insert_data():
     db = SessionLocal()
 
     crud_user.create_user(db, schemas.UserCreate(
-        email="testuser@mail.com",
-        password="password",
+        email="kokid46398@rdluxe.com",
+        cognito_username="bffca13b-941f-40e3-ba60-29f620b17266",
         username="testuser",
         first_name="test",
         last_name="user",
-        birth_date="01/01/2000"
+        birth_date="01/01/2000",
+        image_url="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww",
     ))
 
     crud_user.create_user(db, schemas.UserCreate(
         email="testuser2@mail.com",
-        password="password",
+        cognito_username="testuser2",
         username="testuser2",
         first_name="test",
         last_name="user",
-        birth_date="01/01/2000"
+        birth_date="01/01/2000",
+        image_url="https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
     ))
 
-    id_user = crud_user.get_user_by_email(db, "testuser@mail.com").id
+    id_user = crud_user.get_user_id_by_cognito_username(db, "bffca13b-941f-40e3-ba60-29f620b17266")
 
     crud_poi.create_poi(db, schemas.POICreate(
         latitude=40.6301,

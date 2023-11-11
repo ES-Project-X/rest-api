@@ -10,8 +10,3 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 async def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     # receive user data by body raw json
     return crud_user.create_user(db, user)
-
-@router.post("/login")
-async def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
-    # receive user data by body raw json
-    pass
