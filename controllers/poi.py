@@ -6,11 +6,6 @@ from fastapi import Query, HTTPException
 
 router = APIRouter(prefix="/poi", tags=["poi"])
 
-@router.get("/{id}")
-async def get_poi(id: str, db: Session = Depends(get_db)):
-    # receive poi id by query params
-    return crud_poi.get_poi(db, id)
-
 @router.get("/cluster")
 async def get_pois(max_lat: list[float] = Query(None), min_lat: list[float] = Query(None), max_lng: list[float] = Query(None), min_lng: list[float] = Query(None), db: Session = Depends(get_db)):
     # receive cluster by query params
@@ -23,3 +18,8 @@ async def get_pois(max_lat: list[float] = Query(None), min_lat: list[float] = Qu
         clusters.append([max_lat[i], min_lat[i], max_lng[i], min_lng[i]])
 
     return crud_poi.get_pois_by_cluster(db, clusters)
+
+@router.get("/{id}")
+async def get_poi(id: str, db: Session = Depends(get_db)):
+    # receive poi id by query params
+    return crud_poi.get_poi(db, id)
