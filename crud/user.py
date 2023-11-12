@@ -8,7 +8,8 @@ def create_user(db: Session, user: schemas.UserCreate):
                           username=user.username,
                           first_name=user.first_name,
                           last_name=user.last_name,
-                          birth_date=user.birth_date)
+                          birth_date=user.birth_date,
+                          image_url=user.image_url)
     try:
         db.add(db_user)
         db.commit()
