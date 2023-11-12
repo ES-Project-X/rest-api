@@ -23,7 +23,25 @@ def get_poi(db: Session, id: str):
     db_poi = db.query(models.POI).filter(models.POI.id == id).first()
     if db_poi is None:
         raise HTTPException(status_code=404, detail="POI not found")
-    return db_poi
+    # check if user rated this poi and add this info to response
+    db_user_poi = db.query(models.UserPOI).filter(models.UserPOI.user_id == id, models.UserPOI.poi_id == id).first()
+    rate = None
+    if db_user_poi is not None:
+        rate = db_user_poi.rating
+
+    return {
+        "id": db_poi.id,
+        "latitude": db_poi.latitude,
+        "longitude": db_poi.longitude,
+        "name": db_poi.name,
+        "description": db_poi.description,
+        "type": db_poi.type,
+        "added_by": db_poi.added_by,
+        "picture_url": db_poi.picture_url,
+        "rating_positive": db_poi.rating_positive,
+        "rating_negative": db_poi.rating_negative,
+        "rate": rate
+    }
 
 
 def get_pois_by_cluster(db: Session, clusters: list[list[float]]):
@@ -109,11 +127,12 @@ def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
         else:
             db_poi.rating_negative += 1
         db.add(db_user_poi)
+        db.commit()
+        db.refresh(db_user)
 
     try:
         db.commit()
         db.refresh(db_poi)
-        db.refresh(db_user)
         db.refresh(db_user_poi)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
