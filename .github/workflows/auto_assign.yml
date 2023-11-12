@@ -2,6 +2,7 @@ name: Auto Assign Reviewers to PR
 
 on:
   pull_request:
+    branches: [ "dev", "master" ]
     types: [opened, ready_for_review]
 
 jobs:
