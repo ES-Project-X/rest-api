@@ -19,12 +19,14 @@ def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
         raise HTTPException(status_code=400, detail=str(e))
     return db_poi
 
-def get_poi(db: Session, id: str):
-    db_poi = db.query(models.POI).filter(models.POI.id == id).first()
+def get_poi(db: Session, poi_id: str, user_id: str = None):
+    db_poi = db.query(models.POI).filter(models.POI.id == poi_id).first()
     if db_poi is None:
         raise HTTPException(status_code=404, detail="POI not found")
     # check if user rated this poi and add this info to response
-    db_user_poi = db.query(models.UserPOI).filter(models.UserPOI.user_id == id, models.UserPOI.poi_id == id).first()
+    db_user_poi = None
+    if user_id is not None:
+        db_user_poi = db.query(models.UserPOI).filter(models.UserPOI.user_id == user_id, models.UserPOI.poi_id == poi_id).first()
     rate = None
     if db_user_poi is not None:
         rate = db_user_poi.rating
@@ -105,9 +107,10 @@ def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
         raise HTTPException(status_code=404, detail="POI not found")
     
     db_user_poi = db.query(models.UserPOI).filter(models.UserPOI.user_id == user_id, models.UserPOI.poi_id == id).first()
+    time = 0
     if db_user_poi is not None:
         if datetime.now() - db_user_poi.status_cooldown < timedelta(hours=72):
-            raise HTTPException(status_code=429, detail=f"{72 - (datetime.now() - db_user_poi.status_cooldown).seconds // 3600}")
+            time = 72*3600 - (datetime.now() - db_user_poi.status_cooldown).seconds
         else:
             if rating != db_user_poi.rating:
                 db_user_poi.rating = rating
@@ -118,6 +121,8 @@ def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
                 else:
                     db_poi.rating_positive -= 1
                     db_poi.rating_negative += 1
+            
+            
     else:
         db_user_poi = models.UserPOI(user_id=user_id, poi_id=id, rating=rating)
         db_user = db.query(models.User).filter(models.User.id == user_id).first()
@@ -130,12 +135,9 @@ def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
         db.commit()
         db.refresh(db_user)
 
-    try:
-        db.commit()
-        db.refresh(db_poi)
-        db.refresh(db_user_poi)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    db.commit()
+    db.refresh(db_poi)
+    db.refresh(db_user_poi)
 
-    return db_poi
+    return {"time": time}
     

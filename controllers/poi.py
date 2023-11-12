@@ -5,14 +5,14 @@ from app.database import get_db
 from fastapi import Query, HTTPException
 import app.schemas as schemas
 from app.cognito import get_current_user
-import app.models as models
+from typing import Optional
 
 router = APIRouter(prefix="/poi", tags=["poi"])
 
 @router.get("/{id}/")
-async def get_poi(id: str, db: Session = Depends(get_db)):
+async def get_poi(id: str, current_user: Optional[str] = Depends(get_current_user), db: Session = Depends(get_db)):
     # receive poi id by query params
-    return crud_poi.get_poi(db, id)
+    return crud_poi.get_poi(db, id, current_user)
 
 @router.get("/cluster")
 async def get_pois(max_lat: list[float] = Query(None), min_lat: list[float] = Query(None), max_lng: list[float] = Query(None), min_lng: list[float] = Query(None), db: Session = Depends(get_db)):
