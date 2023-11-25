@@ -31,3 +31,9 @@ async def get_pois(max_lat: list[float] = Query(None), min_lat: list[float] = Qu
 async def rate_poi_existence(poi: schemas.POIRateExistence, current_user: str = Depends(get_current_user), db: Session = Depends(get_db)):
     # receive poi id and rating by body raw json
     return crud_poi.rate_poi_existence(db, poi.id, poi.rating, current_user)
+
+
+@router.put("/rate")
+async def rate_poi(poi: schemas.POIRateStatus, current_user: str = Depends(get_current_user), db: Session = Depends(get_db)):
+    # receive poi id and rating by body raw json
+    return crud_poi.rate_poi(db, poi.id, poi.rating, current_user)

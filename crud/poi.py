@@ -140,4 +140,44 @@ def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
     db.refresh(db_user_poi)
 
     return {"time": time}
-    
+
+
+def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
+    db_poi = db.query(models.POI).filter(models.POI.id == id).first()
+    if db_poi is None:
+        raise HTTPException(status_code=404, detail="POI not found")
+
+    db_user_poi = db.query(models.UserPOI).filter(models.UserPOI.user_id == user_id, models.UserPOI.poi_id == id).first()
+    time = 0
+    if db_user_poi is not None:
+        if datetime.now() - db_user_poi.status_cooldown < timedelta(hours=24):
+            time = 24*3600 - (datetime.now() - db_user_poi.status_cooldown).seconds
+        else:
+            if rating != db_user_poi.rating:
+                db_user_poi.rating = rating
+                db_user_poi.status_cooldown = datetime.now()
+                if rating:
+                    db_poi.rating_positive += 1
+                    db_poi.rating_negative -= 1
+                else:
+                    db_poi.rating_positive -= 1
+                    db_poi.rating_negative += 1
+
+
+    else:
+        db_user_poi = models.UserPOI(user_id=user_id, poi_id=id, rating=rating)
+        db_user = db.query(models.User).filter(models.User.id == user_id).first()
+        db_user.given_ratings_count += 1
+        if rating:
+            db_poi.rating_positive += 1
+        else:
+            db_poi.rating_negative += 1
+        db.add(db_user_poi)
+        db.commit()
+        db.refresh(db_user)
+
+    db.commit()
+    db.refresh(db_poi)
+    db.refresh(db_user_poi)
+
+    return {"time": time}
