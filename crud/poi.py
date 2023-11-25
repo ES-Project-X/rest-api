@@ -181,3 +181,7 @@ def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
     db.refresh(db_user_poi)
 
     return {"time": time}
+
+
+def rate_poi(db, id, rating, current_user):
+    return None
