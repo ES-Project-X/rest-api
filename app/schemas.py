@@ -50,8 +50,7 @@ class UserPOIManage(UserPOIBase):
 
 class RouteCreate(BaseModel):
     name: str
-    description: str
-    picture_url: str
+    points: list[str]
 
 class RouteEdit(BaseModel):
     id: str
@@ -66,3 +65,7 @@ class UserRouteManage(UserRouteBase):
 
 class ClusterRequest(BaseModel):
     clusters: list[list[float]] = None
+
+class RouteGet(BaseModel):
+    name: str
+    points: list[PointBase]

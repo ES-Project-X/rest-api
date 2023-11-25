@@ -9,16 +9,11 @@ from uuid import uuid4
 route_point = Table("route_point", Base.metadata,
     Column("route_id", UUID, ForeignKey("routes.id"), nullable=False, index=True),
     Column("point_id", UUID, ForeignKey("points.id"), nullable=False, index=True),
-    Column("order", Integer, nullable=False)
+    Column("order", Integer, nullable=True, index=True)
 ) 
 
 poi_status = Table("poi_status", Base.metadata,
     Column("poi_id", UUID, ForeignKey("pois.id"), nullable=False, index=True),
-    Column("status_id", UUID, ForeignKey("status.id"), nullable=False, index=True)
-)
-
-route_status = Table("route_status", Base.metadata,
-    Column("route_id", UUID, ForeignKey("routes.id"), nullable=False, index=True),
     Column("status_id", UUID, ForeignKey("status.id"), nullable=False, index=True)
 )
 
@@ -76,20 +71,14 @@ class Status(Base):
     date = Column(DateTime, nullable=False, default=date.today())
     balance = Column(Integer, nullable=False, default=0)
     pois = relationship("POI", secondary=poi_status, back_populates="status_history")
-    routes = relationship("Route", secondary=route_status, back_populates="status_history")
 
 class Route(Base):
     __tablename__ = "routes"
 
     id = Column(UUID, primary_key=True, index=True, default=uuid4)
     name = Column(String, nullable=False)
-    description = Column(String, nullable=False)
     added_by = Column(UUID, ForeignKey("users.id"), nullable=False, index=True)
-    picture_url = Column(String, nullable=False)
-    rating_positive = Column(Integer, default=0)
-    rating_negative = Column(Integer, default=0)
     points = relationship("Point", secondary=route_point, back_populates="routes")
-    status_history = relationship("Status", secondary=route_status, back_populates="routes")
 
 class UserRoute(Base):
     __tablename__ = "user_route"
