@@ -53,7 +53,6 @@ class POI(Point):
     picture_url = Column(String, nullable=False)
     rating_positive = Column(Integer, default=0)
     rating_negative = Column(Integer, default=0)
-    status_history = relationship("Status", secondary=poi_status, back_populates="pois")
 
 class UserPOI(Base):
     __tablename__ = "user_poi"
@@ -70,7 +69,7 @@ class Status(Base):
     id = Column(UUID, primary_key=True, index=True, default=uuid4)
     date = Column(DateTime, nullable=False, default=date.today())
     balance = Column(Integer, nullable=False, default=0)
-    pois = relationship("POI", secondary=poi_status, back_populates="status_history")
+    poi_id = Column(UUID, ForeignKey("pois.id"), nullable=False, index=True)
 
 class Route(Base):
     __tablename__ = "routes"

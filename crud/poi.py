@@ -140,4 +140,29 @@ def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
     db.refresh(db_user_poi)
 
     return {"time": time}
-    
+
+
+def rate_poi_status(db: Session, id: str, rating: bool, date=datetime.today()):
+    db_poi = db.query(models.Status).filter(models.Status.poi_id == id, models.Status.date == date.today()).first()
+    if db_poi is None:
+        # create new status for this poi
+        db_poi = models.Status(poi_id=id, date=date.today(), balance=0)
+        db.add(db_poi)
+        db.commit()
+        db.refresh(db_poi)
+
+    if rating:
+        db_poi.balance += 1
+    else:
+        db_poi.balance -= 1
+
+    db.commit()
+    db.refresh(db_poi)
+
+    return db_poi
+
+
+
+
+
+
