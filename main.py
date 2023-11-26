@@ -8,11 +8,11 @@ import os
 
 import app.models as models
 
-models.Base.metadata.create_all(bind=engine)
-
 app = FastAPI()
 
-origins = [os.environ.get("FRONTEND_URL")]
+models.Base.metadata.create_all(bind=engine)
+
+origins = os.environ.get("FRONTEND_URL").split(",")
 
 app.add_middleware(
     CORSMiddleware,
