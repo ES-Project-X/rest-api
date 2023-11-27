@@ -73,4 +73,4 @@ class RouteGet(BaseModel):
 
 class POIRate(BaseModel):
     id: str
-    rating: bool
+    status: bool

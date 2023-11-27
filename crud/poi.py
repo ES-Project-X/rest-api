@@ -31,9 +31,15 @@ def get_poi(db: Session, poi_id: str, user_id: str = None):
     status = False
     if db_user_poi is not None:
         rate = db_user_poi.rating
-
-    if db_user_poi.last_status_given == date.today():
-        status = True
+        # print("here")
+        # print("lsg", db_user_poi.last_status_given.strftime("%Y-%m-%d"))
+        # lsg is 2023-11-27 00:00:00
+        # keep only date
+        # print("today", date.today())
+        # compare the strings
+        if str(db_user_poi.last_status_given.strftime("%Y-%m-%d")) == str(date.today()):
+            print("here2")
+            status = True
 
     return {
         "id": db_poi.id,
@@ -158,7 +164,7 @@ def rate_poi_status(db: Session, id: str, rating: bool, user_id: str):
         db.commit()
         db.refresh(db_poi)
     
-    elif db_user_poi.last_status_given and db_user_poi.last_status_given == date.today():
+    elif db_user_poi and db_user_poi.last_status_given == date.today():
         raise HTTPException(status_code=404, detail="POI Status already rated today") #TODO alterar código do erro, não tenho net para ver qual é
 
     if rating:

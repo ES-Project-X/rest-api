@@ -35,4 +35,4 @@ async def rate_poi_existence(poi: schemas.POIRateExistence, current_user: str = 
 @router.put("/status")
 async def rate_poi_status(poi: schemas.POIRate, current_user: str = Depends(get_current_user), db: Session = Depends(get_db)):
     # receive poi id and rating by body raw json
-    return crud_poi.rate_poi_status(db, poi.id, poi.rating, current_user)
+    return crud_poi.rate_poi_status(db, poi.id, poi.status, current_user)
