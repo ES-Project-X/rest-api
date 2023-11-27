@@ -69,3 +69,8 @@ class ClusterRequest(BaseModel):
 class RouteGet(BaseModel):
     name: str
     points: list[PointBase]
+
+
+class POIRate(BaseModel):
+    id: str
+    status: bool
