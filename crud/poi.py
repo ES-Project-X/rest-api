@@ -31,13 +31,9 @@ def get_poi(db: Session, poi_id: str, user_id: str = None):
     status = False
     if db_user_poi is not None:
         rate = db_user_poi.rating
-        # print("here")
-        # print("lsg", db_user_poi.last_status_given.strftime("%Y-%m-%d"))
-        # lsg is 2023-11-27 00:00:00
-        # keep only date
-        # print("today", date.today())
-        # compare the strings
-        if str(db_user_poi.last_status_given.strftime("%Y-%m-%d")) == str(date.today()):
+        print(db_user_poi.last_status_given)
+        print(date.today())
+        if db_user_poi.last_status_given and db_user_poi.last_status_given == date.today():
             print("here2")
             status = True
 

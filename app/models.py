@@ -62,7 +62,7 @@ class UserPOI(Base):
     poi_id = Column(UUID, ForeignKey("pois.id"), nullable=False, index=True)
     rating = Column(Boolean, nullable=False)
     existence_cooldown = Column(DateTime, nullable=False, default=datetime.now())
-    last_status_given = Column(DateTime, nullable=True)
+    last_status_given = Column(Date, nullable=True)
 
 class Status(Base):
     __tablename__ = "status"
