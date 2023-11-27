@@ -70,6 +70,7 @@ class RouteGet(BaseModel):
     name: str
     points: list[PointBase]
 
-class POIRateStatus(BaseModel):
+
+class POIRate(BaseModel):
     id: str
-    rating: bool
+    status: bool

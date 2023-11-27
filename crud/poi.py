@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 import app.models as models, app.schemas as schemas
 from fastapi import HTTPException
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
     db_poi = models.POI(latitude=poi.latitude,
@@ -28,8 +28,18 @@ def get_poi(db: Session, poi_id: str, user_id: str = None):
     if user_id is not None:
         db_user_poi = db.query(models.UserPOI).filter(models.UserPOI.user_id == user_id, models.UserPOI.poi_id == poi_id).first()
     rate = None
+    status = False
     if db_user_poi is not None:
         rate = db_user_poi.rating
+        # print("here")
+        # print("lsg", db_user_poi.last_status_given.strftime("%Y-%m-%d"))
+        # lsg is 2023-11-27 00:00:00
+        # keep only date
+        # print("today", date.today())
+        # compare the strings
+        if str(db_user_poi.last_status_given.strftime("%Y-%m-%d")) == str(date.today()):
+            print("here2")
+            status = True
 
     return {
         "id": db_poi.id,
@@ -42,7 +52,8 @@ def get_poi(db: Session, poi_id: str, user_id: str = None):
         "picture_url": db_poi.picture_url,
         "rating_positive": db_poi.rating_positive,
         "rating_negative": db_poi.rating_negative,
-        "rate": rate
+        "rate": rate,
+        "status": status,
     }
 
 
@@ -109,19 +120,19 @@ def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
     db_user_poi = db.query(models.UserPOI).filter(models.UserPOI.user_id == user_id, models.UserPOI.poi_id == id).first()
     time = 0
     if db_user_poi is not None:
-        if datetime.now() - db_user_poi.status_cooldown < timedelta(hours=72):
-            time = 72*3600 - (datetime.now() - db_user_poi.status_cooldown).seconds
+        if datetime.now() - db_user_poi.existence_cooldown < timedelta(hours=72):
+            time = 72*3600 - (datetime.now() - db_user_poi.existence_cooldown).seconds
         else:
             if rating != db_user_poi.rating:
                 db_user_poi.rating = rating
-                db_user_poi.status_cooldown = datetime.now()
+                db_user_poi.existence_cooldown = datetime.now()
                 if rating:
                     db_poi.rating_positive += 1
                     db_poi.rating_negative -= 1
                 else:
                     db_poi.rating_positive -= 1
                     db_poi.rating_negative += 1
-            
+
             
     else:
         db_user_poi = models.UserPOI(user_id=user_id, poi_id=id, rating=rating)
@@ -142,46 +153,34 @@ def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
     return {"time": time}
 
 
-def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
-    db_poi = db.query(models.POI).filter(models.POI.id == id).first()
-    if db_poi is None:
-        raise HTTPException(status_code=404, detail="POI not found")
-
+def rate_poi_status(db: Session, id: str, rating: bool, user_id: str):
+    db_poi = db.query(models.Status).filter(models.Status.poi_id == id, models.Status.date == date.today()).first()
     db_user_poi = db.query(models.UserPOI).filter(models.UserPOI.user_id == user_id, models.UserPOI.poi_id == id).first()
-    time = 0
-    if db_user_poi is not None:
-        if datetime.now() - db_user_poi.status_cooldown < timedelta(hours=24):
-            time = 24*3600 - (datetime.now() - db_user_poi.status_cooldown).seconds
-        else:
-            if rating != db_user_poi.rating:
-                db_user_poi.rating = rating
-                db_user_poi.status_cooldown = datetime.now()
-                if rating:
-                    db_poi.rating_positive += 1
-                    db_poi.rating_negative -= 1
-                else:
-                    db_poi.rating_positive -= 1
-                    db_poi.rating_negative += 1
 
-
-    else:
-        db_user_poi = models.UserPOI(user_id=user_id, poi_id=id, rating=rating)
-        db_user = db.query(models.User).filter(models.User.id == user_id).first()
-        db_user.given_ratings_count += 1
-        if rating:
-            db_poi.rating_positive += 1
-        else:
-            db_poi.rating_negative += 1
-        db.add(db_user_poi)
+    if db_poi is None:
+        # create new status for this poi
+        db_poi = models.Status(poi_id=id)
+        db.add(db_poi)
         db.commit()
-        db.refresh(db_user)
+        db.refresh(db_poi)
+    
+    elif db_user_poi and db_user_poi.last_status_given == date.today():
+        raise HTTPException(status_code=404, detail="POI Status already rated today") #TODO alterar código do erro, não tenho net para ver qual é
+
+    if rating:
+        db_poi.balance += 1
+    else:
+        db_poi.balance -= 1
+    db_user_poi.last_status_given = date.today()
 
     db.commit()
     db.refresh(db_poi)
     db.refresh(db_user_poi)
 
-    return {"time": time}
+    return db_poi
 
 
-def rate_poi(db, id, rating, current_user):
-    return None
+
+
+
+
