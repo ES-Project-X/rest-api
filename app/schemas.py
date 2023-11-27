@@ -8,7 +8,6 @@ class UserLogin(UserBase):
 
 class UserCreate(UserBase):
     username: str
-    cognito_username: str
     first_name: str
     last_name: str
     birth_date: str

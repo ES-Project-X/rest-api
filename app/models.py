@@ -68,7 +68,7 @@ class Status(Base):
     __tablename__ = "status"
 
     id = Column(UUID, primary_key=True, index=True, default=uuid4)
-    date = Column(DateTime, nullable=False, default=date.today())
+    date = Column(Date, nullable=False, default=date.today())
     balance = Column(Integer, nullable=False, default=0)
     pois = relationship("POI", secondary=poi_status, back_populates="status_history")
 

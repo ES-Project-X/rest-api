@@ -2,9 +2,9 @@ from sqlalchemy.orm import Session
 import app.models as models, app.schemas as schemas
 from fastapi import HTTPException
 
-def create_user(db: Session, user: schemas.UserCreate):
+def create_user(db: Session, user: schemas.UserCreate, cognito_username: str):
     db_user = models.User(email=user.email,
-                          cognito_username=user.cognito_username,
+                          cognito_username=cognito_username,
                           username=user.username,
                           first_name=user.first_name,
                           last_name=user.last_name,
