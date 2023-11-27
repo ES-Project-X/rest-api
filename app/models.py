@@ -23,7 +23,7 @@ class User(Base):
     id = Column(UUID, primary_key=True, index=True, default=uuid4)
     email = Column(String, unique=True, nullable=False)
     username = Column(String, unique=True, nullable=False)
-    cognito_username = Column(String, unique=True, nullable=False, index=True)
+    cognito_id = Column(String, unique=True, nullable=False, index=True)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     image_url = Column(String, default="")

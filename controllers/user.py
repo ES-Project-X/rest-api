@@ -10,6 +10,7 @@ router = APIRouter(prefix="/user", tags=["user"])
 @router.get("")
 async def get_user(current_user: str = Depends(get_current_user), db: Session = Depends(get_db)):
     # receive user id by query params
+    print(current_user)
     return crud_user.get_user(db, current_user)
 
 @router.put("/edit")

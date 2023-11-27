@@ -2,9 +2,9 @@ from sqlalchemy.orm import Session
 import app.models as models, app.schemas as schemas
 from fastapi import HTTPException
 
-def create_user(db: Session, user: schemas.UserCreate, cognito_username: str):
+def create_user(db: Session, user: schemas.UserCreate, cognito_id: str):
     db_user = models.User(email=user.email,
-                          cognito_username=cognito_username,
+                          cognito_id=cognito_id,
                           username=user.username,
                           first_name=user.first_name,
                           last_name=user.last_name,
@@ -24,8 +24,8 @@ def get_user(db: Session, id: str):
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
-def get_user_id_by_cognito_username(db: Session, cognito_username: str):
-    db_user = db.query(models.User).filter(models.User.cognito_username == cognito_username).first()
+def get_user_id_by_cognito_id(db: Session, cognito_id: str):
+    db_user = db.query(models.User).filter(models.User.cognito_id == cognito_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user.id
