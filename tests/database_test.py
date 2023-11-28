@@ -1,4 +1,4 @@
-from testcontainers.postgres import PostgresContainer
+from testcontainers.mysql import MySqlContainer
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.models import Base
@@ -6,7 +6,7 @@ from app.database import get_db
 from main import app
 
 def postgres_container():
-    container = PostgresContainer("postgres:latest")
+    container = MySqlContainer("mysql:latest")
     container.start()
     print(container.get_connection_url())
     yield container

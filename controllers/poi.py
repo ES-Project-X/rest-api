@@ -7,7 +7,7 @@ import app.schemas as schemas
 from app.cognito import get_current_user
 from typing import Optional
 
-router = APIRouter(prefix="/poi", tags=["poi"])
+router = APIRouter(prefix="/poi", tags=["Points of Interest"])
 
 @router.get("/{id}/")
 async def get_poi(id: str, current_user: Optional[str] = Depends(get_current_user), db: Session = Depends(get_db)):
