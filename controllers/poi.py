@@ -6,13 +6,14 @@ from fastapi import Query, HTTPException
 import app.schemas as schemas
 from app.cognito import get_current_user
 from typing import Optional
+from app.models import User
 
 router = APIRouter(prefix="/poi", tags=["Points of Interest"])
 
 @router.get("/{id}/")
-async def get_poi(id: str, current_user: Optional[str] = Depends(get_current_user), db: Session = Depends(get_db)):
+async def get_poi(id: str, current_user: Optional[User] = Depends(get_current_user), db: Session = Depends(get_db)):
     # receive poi id by query params
-    return crud_poi.get_poi(db, id, current_user)
+    return crud_poi.get_poi(db, id, current_user.id if current_user is not None else None)
 
 @router.get("/cluster")
 async def get_pois(max_lat: list[float] = Query(None), min_lat: list[float] = Query(None), max_lng: list[float] = Query(None), min_lng: list[float] = Query(None), db: Session = Depends(get_db)):
@@ -28,11 +29,11 @@ async def get_pois(max_lat: list[float] = Query(None), min_lat: list[float] = Qu
     return crud_poi.get_pois_by_cluster(db, clusters)
 
 @router.put("/exists")
-async def rate_poi_existence(poi: schemas.POIRateExistence, current_user: str = Depends(get_current_user), db: Session = Depends(get_db)):
+async def rate_poi_existence(poi: schemas.POIRateExistence, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # receive poi id and rating by body raw json
-    return crud_poi.rate_poi_existence(db, poi.id, poi.rating, current_user)
+    return crud_poi.rate_poi_existence(db, poi.id, poi.rating, current_user.id)
 
 @router.put("/status")
-async def rate_poi_status(poi: schemas.POIRate, current_user: str = Depends(get_current_user), db: Session = Depends(get_db)):
+async def rate_poi_status(poi: schemas.POIRate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # receive poi id and rating by body raw json
-    return crud_poi.rate_poi_status(db, poi.id, poi.status, current_user)
+    return crud_poi.rate_poi_status(db, poi.id, poi.status, current_user.id)

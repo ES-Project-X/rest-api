@@ -10,3 +10,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/register")
 async def register(user: schemas.UserCreate, db: Session = Depends(get_db), cognito_id: str = Depends(get_cognito_id)):
     return crud_user.create_user(db, user, cognito_id)
+
+@router.get("/token_status")
+async def token_status(cognito_id: str = Depends(get_cognito_id)):
+    return {"message": "Token is valid"}

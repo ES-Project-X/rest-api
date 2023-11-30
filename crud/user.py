@@ -19,6 +19,8 @@ def create_user(db: Session, user: schemas.UserCreate, cognito_id: str):
     return {"message": "User created successfully"}
 
 def get_user(db: Session, id: str):
+    if id is None:
+        raise HTTPException(status_code=400, detail="Invalid user id")
     db_user = db.query(models.User).filter(models.User.id == id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
