@@ -5,13 +5,12 @@ from app.database import get_db
 from fastapi import Query, HTTPException
 import app.schemas as schemas
 from app.cognito import get_current_user
-from typing import Optional
 from app.models import User
 
 router = APIRouter(prefix="/poi", tags=["Points of Interest"])
 
-@router.get("/{id}/")
-async def get_poi(id: str, current_user: Optional[User] = Depends(get_current_user), db: Session = Depends(get_db)):
+@router.get("/id/{id}")
+async def get_poi(id: str, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # receive poi id by query params
     return crud_poi.get_poi(db, id, current_user.id if current_user is not None else None)
 

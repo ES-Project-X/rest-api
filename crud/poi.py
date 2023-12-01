@@ -31,10 +31,7 @@ def get_poi(db: Session, poi_id: str, user_id: str = None):
     status = False
     if db_user_poi is not None:
         rate = db_user_poi.rating
-        print(db_user_poi.last_status_given)
-        print(date.today())
         if db_user_poi.last_status_given and db_user_poi.last_status_given == date.today():
-            print("here2")
             status = True
 
     return {
@@ -129,7 +126,6 @@ def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
                     db_poi.rating_positive -= 1
                     db_poi.rating_negative += 1
 
-            
     else:
         db_user_poi = models.UserPOI(user_id=user_id, poi_id=id, rating=rating)
         db_user = db.query(models.User).filter(models.User.id == user_id).first()

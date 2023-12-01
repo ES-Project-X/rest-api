@@ -31,7 +31,13 @@ cognito_eu = CognitoAuth(
     settings = CognitoSettings.from_global_settings(settings), userpool_name="eu"
 )
     
-def get_current_user(token: CognitoToken = Depends(cognito_eu.auth_required), db: Session = Depends(get_db)) -> str:
+def get_current_user(token: CognitoToken, db: Session = Depends(get_db)) -> str:
+    try:
+        token = cognito_eu.auth_required(token)
+        print(token)
+    except Exception:
+        print("Invalid token")
+        return None
     return db.query(models.User).filter(models.User.cognito_id == token.cognito_id).first()
 
 def get_cognito_id(token: CognitoToken = Depends(cognito_eu.auth_required)) -> str:
