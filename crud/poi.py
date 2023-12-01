@@ -10,11 +10,18 @@ def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
                         description=poi.description,
                         type=poi.type,
                         added_by=added_by,
-                        picture_url=poi.picture_url)
+                        picture_url=poi.picture_url,
+                        rating_positive=1)
+    db_user_poi = models.UserPOI(user_id=added_by, poi_id=db_poi.id, rating=True, existence_cooldown=None)
+    db_user = db.query(models.User).filter(models.User.id == added_by).first()
+    db_user.added_pois_count += 1
     try:
         db.add(db_poi)
+        db.add(db_user_poi)
         db.commit()
         db.refresh(db_poi)
+        db.refresh(db_user_poi)
+        db.refresh(db_user)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     return db_poi
@@ -113,6 +120,8 @@ def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
     db_user_poi = db.query(models.UserPOI).filter(models.UserPOI.user_id == user_id, models.UserPOI.poi_id == id).first()
     time = 0
     if db_user_poi is not None:
+        if not db_user_poi.existence_cooldown:
+            return {"time": -1}
         if datetime.now() - db_user_poi.existence_cooldown < timedelta(hours=72):
             time = 72*3600 - (datetime.now() - db_user_poi.existence_cooldown).seconds
         else:
@@ -170,9 +179,3 @@ def rate_poi_status(db: Session, id: str, rating: bool, user_id: str):
     db.refresh(db_user_poi)
 
     return db_poi
-
-
-
-
-
-
