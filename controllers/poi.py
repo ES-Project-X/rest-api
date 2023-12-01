@@ -12,7 +12,7 @@ router = APIRouter(prefix="/poi", tags=["Points of Interest"])
 @router.get("/id/{id}")
 async def get_poi(id: str, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # receive poi id by query params
-    return crud_poi.get_poi(db, id, current_user.id if current_user is not None else None)
+    return crud_poi.get_poi(db, id, current_user.id)
 
 @router.get("/cluster")
 async def get_pois(max_lat: list[float] = Query(None), min_lat: list[float] = Query(None), max_lng: list[float] = Query(None), min_lng: list[float] = Query(None), db: Session = Depends(get_db)):
