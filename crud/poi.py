@@ -3,6 +3,12 @@ import app.models as models, app.schemas as schemas
 from fastapi import HTTPException
 from datetime import date, datetime, timedelta
 
+XP_POS_RATING_RECEIVED=50
+XP_POS_RATING_GIVEN=10
+XP_STATUS_GIVEN=50
+XP_STATUS_RECEIVED=5
+
+
 def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
     db_poi = models.POI(latitude=poi.latitude,
                         longitude=poi.longitude,
@@ -133,14 +139,28 @@ def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
     else:
         db_user_poi = models.UserPOI(user_id=user_id, poi_id=id, rating=rating)
         db_user = db.query(models.User).filter(models.User.id == user_id).first()
-        db_user.given_ratings_count += 1
+        
         if rating:
             db_poi.rating_positive += 1
         else:
             db_poi.rating_negative += 1
+        
+        db_poi_addedby = db.query(models.User).filter(models.User.id == db_poi.added_by).first()
+        
+        if user_id != db_poi.added_by:
+            db_user.given_ratings_count += 1                        
+            db_poi_addedby.received_ratings_count += 1
+
+            if rating:
+                db_user.total_xp += XP_POS_RATING_GIVEN 
+                db_poi_addedby.total_xp += XP_POS_RATING_RECEIVED
+    
+
+
         db.add(db_user_poi)
         db.commit()
         db.refresh(db_user)
+        db.refresh(db_poi_addedby)
 
     db.commit()
     db.refresh(db_poi)
@@ -167,6 +187,15 @@ def rate_poi_status(db: Session, id: str, rating: bool, user_id: str):
         db_poi.balance += 1
     else:
         db_poi.balance -= 1
+
+
+
+    if user_id != db_poi.added_by:
+        db_user = db.query(models.User).filter(models.User.id == user_id).first()
+        db_poi_addedby = db.query(models.User).filter(models.User.id == db_poi.added_by).first()
+        db_user.total_xp += XP_STATUS_GIVEN
+        db_poi_addedby.total_xp += XP_STATUS_RECEIVED
+
     db_user_poi.last_status_given = date.today()
 
     db.commit()
