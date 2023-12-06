@@ -74,6 +74,15 @@ def insert_data():
         picture_url="https://oilhavense.com/wp-content/uploads/2019/09/banco-de-jardim.jpg"
     ), id_user)
 
+    crud_poi.create_poi(db, schemas.POICreate(
+        latitude=40.6238,
+        longitude=-8.6463,
+        name="testpoint6",
+        description="testdesc6",
+        type="bench",
+        picture_url="https://oilhavense.com/wp-content/uploads/2019/09/banco-de-jardim.jpg"
+    ), id_user)
+
     db.close()
 
 insert_data()

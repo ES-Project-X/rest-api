@@ -18,14 +18,19 @@ def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
                         added_by=added_by,
                         picture_url=poi.picture_url,
                         rating_positive=1)
+    try:
+        db.add(db_poi)
+        db.commit()
+        db.refresh(db_poi)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
     db_user_poi = models.UserPOI(user_id=added_by, poi_id=db_poi.id, rating=True, existence_cooldown=None)
     db_user = db.query(models.User).filter(models.User.id == added_by).first()
     db_user.added_pois_count += 1
     try:
-        db.add(db_poi)
         db.add(db_user_poi)
         db.commit()
-        db.refresh(db_poi)
         db.refresh(db_user_poi)
         db.refresh(db_user)
     except Exception as e:
