@@ -25,7 +25,7 @@ def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    db_user_poi = models.UserPOI(user_id=added_by, poi_id=db_poi.id, rating=True, existence_cooldown=None)
+    db_user_poi = models.UserPOI(user_id=added_by, poi_id=db_poi.id, rating=True)
     db_user = db.query(models.User).filter(models.User.id == added_by).first()
     db_user.added_pois_count += 1
     try:
@@ -147,7 +147,7 @@ def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
                     db_poi.rating_negative += 1
 
     else:
-        db_user_poi = models.UserPOI(user_id=user_id, poi_id=id, rating=rating)
+        db_user_poi = models.UserPOI(user_id=user_id, poi_id=id, rating=rating, existence_cooldown=datetime.now())
         db_user = db.query(models.User).filter(models.User.id == user_id).first()
         
         if rating:
