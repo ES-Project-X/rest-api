@@ -15,7 +15,7 @@ def insert_data():
         first_name="test",
         last_name="user",
         birth_date="01/01/2000",
-        image_url="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww",
+        #image_url="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww",
     ), cognito_id="bffca13b-941f-40e3-ba60-29f620b17266")
 
     crud_user.create_user(db, schemas.UserCreate(
@@ -24,7 +24,7 @@ def insert_data():
         first_name="test",
         last_name="user",
         birth_date="01/01/2000",
-        image_url="https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
+        #image_url="https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg",
     ), cognito_id="testuser2")
 
     id_user = crud_user.get_user_id_by_cognito_id(db, "bffca13b-941f-40e3-ba60-29f620b17266")

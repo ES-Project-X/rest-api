@@ -11,7 +11,7 @@ router = APIRouter(prefix="/user", tags=["user"])
 @router.get("")
 async def get_user(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # receive user id by query params
-    return crud_user.get_user(db, current_user.id)
+    return crud_user.get_user(db, current_user.id if current_user else None)
 
 @router.put("/edit")
 async def edit_user(user: schemas.UserEdit, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
