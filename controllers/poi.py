@@ -41,3 +41,9 @@ async def rate_poi_existence(poi: schemas.POIRateExistence, current_user: User =
 async def rate_poi_status(poi: schemas.POIRate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # receive poi id and rating by body raw json
     return crud_poi.rate_poi_status(db, poi.id, poi.status, current_user.id)
+
+
+@router.post("/create")
+async def create_poi(poi: schemas.POICreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    # receive poi data by body raw json
+    return crud_poi.create_poi(db, poi, current_user.id)
