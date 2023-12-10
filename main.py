@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi_cognito import CognitoToken
 from app.database import engine
 from app.cognito import cognito_eu
-from controllers import auth, user, poi, route
+from controllers import auth, user, poi, route, file
 import os
 
 import app.models as models
@@ -26,6 +26,7 @@ app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(poi.router)
 app.include_router(route.router)
+app.include_router(file.router)
 
 @app.get("/")
 async def root():

@@ -10,5 +10,5 @@ router = APIRouter(prefix="/s3", tags=["Upload to S3"])
 
 @router.post("/upload")
 async def upload_to_s3(file: UploadFile, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    return crud_file.upload_to_s3(file, db, current_user.id)
+    return await crud_file.upload_to_s3(file, db, current_user.id)
     
