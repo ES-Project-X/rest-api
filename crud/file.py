@@ -1,7 +1,6 @@
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-import app.models as models, app.schemas as schemas
-from fastapi import HTTPException, UploadFile
+from fastapi import UploadFile
 import boto3
 from dotenv import load_dotenv
 import os

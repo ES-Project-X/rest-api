@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, Date, DateTime, Float, UUID, Boolean
 from sqlalchemy.orm import relationship
 from app.database import Base
-from datetime import date, datetime
+from datetime import date
 from uuid import uuid4
 
 # TODO: Implement cascade(?)

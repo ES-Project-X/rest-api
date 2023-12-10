@@ -5,7 +5,6 @@ from pydantic.types import Any
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
 from app.database import get_db
-from starlette.requests import Request
 import app.models as models
 import os
 
