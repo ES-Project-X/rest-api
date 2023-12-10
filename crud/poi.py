@@ -7,7 +7,7 @@ XP_POS_RATING_RECEIVED=50
 XP_POS_RATING_GIVEN=10
 XP_STATUS_GIVEN=50
 XP_STATUS_RECEIVED=5
-
+XP_CREATED_POI=50
 
 def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
     db_poi = models.POI(latitude=poi.latitude,
@@ -16,8 +16,7 @@ def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
                         description=poi.description,
                         type=poi.type,
                         added_by=added_by,
-                        picture_url=poi.picture_url,
-                        rating_positive=1)
+                        picture_url=poi.picture_url)
     try:
         db.add(db_poi)
         db.commit()
@@ -28,6 +27,7 @@ def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
     db_user_poi = models.UserPOI(user_id=added_by, poi_id=db_poi.id, rating=True)
     db_user = db.query(models.User).filter(models.User.id == added_by).first()
     db_user.added_pois_count += 1
+    db_user.total_xp += XP_CREATED_POI
     try:
         db.add(db_user_poi)
         db.commit()
