@@ -51,7 +51,7 @@ class POI(Point):
     type = Column(String, nullable=False)
     added_by = Column(UUID, ForeignKey("users.id"), nullable=False, index=True)
     picture_url = Column(String, nullable=False)
-    rating_positive = Column(Integer, default=0)
+    rating_positive = Column(Integer, default=1)
     rating_negative = Column(Integer, default=0)
 
 class UserPOI(Base):
