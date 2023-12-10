@@ -4,15 +4,20 @@ from crud import poi as crud_poi
 from app.database import get_db
 from fastapi import Query, HTTPException
 import app.schemas as schemas
-from app.cognito import get_current_user
+from app.cognito import get_current_user, get_current_user_or_none
 from app.models import User
 
 router = APIRouter(prefix="/poi", tags=["Points of Interest"])
 
-@router.get("/id/{id}")
-async def get_poi(id: str, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+"""@router.get("/id/{id}")
+async def get_poi_no_auth(id: str, db: Session = Depends(get_db)):
     # receive poi id by query params
-    return crud_poi.get_poi(db, id, current_user.id)
+    return crud_poi.get_poi(db, id, None)"""
+
+@router.get("/id/{id}")
+async def get_poi(id: str, current_user: User = Depends(get_current_user_or_none), db: Session = Depends(get_db)):
+    # receive poi id by query params
+    return crud_poi.get_poi(db, id, current_user.id if current_user else None)
 
 @router.get("/cluster")
 async def get_pois(max_lat: list[float] = Query(None), min_lat: list[float] = Query(None), max_lng: list[float] = Query(None), min_lng: list[float] = Query(None), db: Session = Depends(get_db)):

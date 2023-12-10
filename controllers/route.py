@@ -10,7 +10,6 @@ router = APIRouter(prefix="/route", tags=["route"])
 
 @router.post("/create")
 async def create_route(route: schemas.RouteCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    print(route)
     return route_crud.create_route(db=db, route=route, added_by=current_user.id)
 
 @router.get("/get")
