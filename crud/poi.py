@@ -194,12 +194,13 @@ def rate_poi_status(db: Session, id: str, rating: bool, user_id: str):
         db_poi.balance -= 1
 
 
+    db_poi_addedby = db.query(models.POI).filter(models.POI.id == id).first()
 
-    if user_id != db_poi.added_by:
+    if user_id != db_poi_addedby.added_by:
         db_user = db.query(models.User).filter(models.User.id == user_id).first()
-        db_poi_addedby = db.query(models.User).filter(models.User.id == db_poi.added_by).first()
         db_user.total_xp += XP_STATUS_GIVEN
-        db_poi_addedby.total_xp += XP_STATUS_RECEIVED
+        db_poi_user_added = db.query(models.User).filter(models.User.id == db_poi_addedby.added_by).first()
+        db_poi_user_added.total_xp += XP_STATUS_RECEIVED
 
     db_user_poi.last_status_given = date.today()
 
