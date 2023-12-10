@@ -16,8 +16,7 @@ def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
                         description=poi.description,
                         type=poi.type,
                         added_by=added_by,
-                        picture_url=poi.picture_url,
-                        rating_positive=1)
+                        picture_url=poi.picture_url)
     try:
         db.add(db_poi)
         db.commit()
