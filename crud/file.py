@@ -25,7 +25,6 @@ async def upload_to_s3(file: UploadFile, db: Session, user_id: int):
 
         url = f'''https://{BUCKET_NAME}.s3.amazonaws.com/{urllib.parse.quote(key, safe="~()*!.'")}'''
 
-        print(url)
         return JSONResponse(status_code=200, content={"message": "File Uploaded Successfully", "url": url})
 
     except Exception as e:
