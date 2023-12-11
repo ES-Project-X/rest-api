@@ -7,9 +7,13 @@ def create_route(db: Session, route: schemas.RouteCreate, added_by: str):
     #check if route with same name exists
     db_route = db.query(models.Route).filter(models.Route.name == route.name).first()
     if db_route is not None:
-        #eliminate route
-        db.delete(db_route)
-        db.commit()
+
+        if(db_route.added_by == added_by):
+            print(len(route.name.split("-")))
+            print(len(route.points))
+            if(len(route.name.split("-")) == len(route.points)):
+                db.delete(db_route)
+                db.commit()
 
     #create route
     db_route = models.Route(name=route.name,
@@ -54,11 +58,22 @@ def get_routes_by_user(db: Session, user_id: str):
             routes.append(schemas.RouteGet(name=route.name, points=points))
             points = []
 
-    #get only last 5 routes
-    if len(routes) > 5:
-        routes = routes[-5:]
+    routes_create = []
+    routes_recorded = []
 
-    return routes
+    #for each route get name
+    for route in routes:
+        names = route.name.split("-")
+        points = route.points
+        if(len(names) == len(points)):
+            routes_create.append(schemas.RouteGet(name=route.name, points=points))
+        else:
+            routes_recorded.append(schemas.RouteGet(name=route.name, points=points))
+
+    if len(routes_create) > 5:
+        routes_create = routes_create[-5:]
+
+    return {'created' : routes_create, 'recorded': routes_recorded}
 
 def get_route(db: Session, id: str):
     db_route = db.query(models.Route).filter(models.Route.id == id).first()
