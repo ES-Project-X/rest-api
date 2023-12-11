@@ -81,6 +81,7 @@ class ClusterRequest(BaseModel):
 
 
 class RouteGet(BaseModel):
+    id: str
     name: str
     points: list[PointBase]
 
