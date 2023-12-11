@@ -55,7 +55,7 @@ def get_routes_by_user(db: Session, user_id: str):
         for route in db_routes:
             for point in route.points:
                 points.append(schemas.PointBase(latitude=point.latitude, longitude=point.longitude))
-            routes.append(schemas.RouteGet(name=route.name, points=points))
+            routes.append(schemas.RouteGet(id=str(route.id),name=route.name, points=points))
             points = []
 
     routes_create = []
@@ -66,14 +66,22 @@ def get_routes_by_user(db: Session, user_id: str):
         names = route.name.split("-")
         points = route.points
         if(len(names) == len(points)):
-            routes_create.append(schemas.RouteGet(name=route.name, points=points))
+            routes_create.append(schemas.RouteGet(id=str(route.id),name=route.name, points=points))
         else:
-            routes_recorded.append(schemas.RouteGet(name=route.name, points=points))
+            routes_recorded.append(schemas.RouteGet(id=str(route.id),name=route.name, points=points))
 
     if len(routes_create) > 5:
         routes_create = routes_create[-5:]
 
     return {'created' : routes_create, 'recorded': routes_recorded}
+
+def delete_route(db: Session, id: str):
+    db_route = db.query(models.Route).filter(models.Route.id == id).first()
+    if db_route is None:
+        raise HTTPException(status_code=404, detail="Route not found")
+    db.delete(db_route)
+    db.commit()
+    return db_route
 
 def get_route(db: Session, id: str):
     db_route = db.query(models.Route).filter(models.Route.id == id).first()

@@ -65,6 +65,7 @@ class ClusterRequest(BaseModel):
     clusters: list[list[float]] = None
 
 class RouteGet(BaseModel):
+    id: str
     name: str
     points: list[PointBase]
 

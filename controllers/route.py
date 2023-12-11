@@ -15,3 +15,7 @@ async def create_route(route: schemas.RouteCreate, current_user: User = Depends(
 @router.get("/get")
 async def get_route(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     return route_crud.get_routes_by_user(db=db, user_id=current_user.id)
+
+@router.delete("/delete/{id}")
+async def delete_route(id : str, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    return route_crud.delete_route(db=db, id=id)
