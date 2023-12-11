@@ -178,6 +178,20 @@ def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
 
     return {"time": time}
 
+def get_poi_status(db: Session, id: str):
+    today = db.query(models.Status).filter(models.Status.poi_id == id, models.Status.date == date.today()).first()
+    yesterday = db.query(models.Status).filter(models.Status.poi_id == id, models.Status.date == date.today() - timedelta(days=1)).first()
+    seven_days = db.query(models.Status).filter(models.Status.poi_id == id, models.Status.date >= date.today() - timedelta(days=7)).all()
+    thirty_days = db.query(models.Status).filter(models.Status.poi_id == id, models.Status.date >= date.today() - timedelta(days=30)).all()
+    all_time = db.query(models.Status).filter(models.Status.poi_id == id).all()
+
+    return {
+        "today": today.balance if today else 0,
+        "yesterday": yesterday.balance if yesterday else 0,
+        "7_days": sum([status.balance for status in seven_days]),
+        "1_month": sum([status.balance for status in thirty_days]),
+        "all_time": sum([status.balance for status in all_time])
+    }
 
 def rate_poi_status(db: Session, id: str, rating: bool, user_id: str):
     db_poi = db.query(models.Status).filter(models.Status.poi_id == id, models.Status.date == date.today()).first()
