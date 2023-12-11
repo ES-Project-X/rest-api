@@ -7,7 +7,7 @@ XP_POS_RATING_RECEIVED=50
 XP_POS_RATING_GIVEN=10
 XP_STATUS_GIVEN=50
 XP_STATUS_RECEIVED=5
-
+XP_CREATED_POI=50
 
 def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
     db_poi = models.POI(latitude=poi.latitude,
@@ -16,8 +16,7 @@ def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
                         description=poi.description,
                         type=poi.type,
                         added_by=added_by,
-                        picture_url=poi.picture_url,
-                        rating_positive=1)
+                        picture_url=poi.picture_url)
     try:
         db.add(db_poi)
         db.commit()
@@ -28,6 +27,7 @@ def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
     db_user_poi = models.UserPOI(user_id=added_by, poi_id=db_poi.id, rating=True)
     db_user = db.query(models.User).filter(models.User.id == added_by).first()
     db_user.added_pois_count += 1
+    db_user.total_xp += XP_CREATED_POI
     try:
         db.add(db_user_poi)
         db.commit()
@@ -178,6 +178,20 @@ def rate_poi_existence(db: Session, id: str, rating: bool, user_id: str):
 
     return {"time": time}
 
+def get_poi_status(db: Session, id: str):
+    today = db.query(models.Status).filter(models.Status.poi_id == id, models.Status.date == date.today()).first()
+    yesterday = db.query(models.Status).filter(models.Status.poi_id == id, models.Status.date == date.today() - timedelta(days=1)).first()
+    seven_days = db.query(models.Status).filter(models.Status.poi_id == id, models.Status.date >= date.today() - timedelta(days=7)).all()
+    thirty_days = db.query(models.Status).filter(models.Status.poi_id == id, models.Status.date >= date.today() - timedelta(days=30)).all()
+    all_time = db.query(models.Status).filter(models.Status.poi_id == id).all()
+
+    return {
+        "today": today.balance if today else 0,
+        "yesterday": yesterday.balance if yesterday else 0,
+        "7_days": sum([status.balance for status in seven_days]),
+        "1_month": sum([status.balance for status in thirty_days]),
+        "all_time": sum([status.balance for status in all_time])
+    }
 
 def rate_poi_status(db: Session, id: str, rating: bool, user_id: str):
     db_poi = db.query(models.Status).filter(models.Status.poi_id == id, models.Status.date == date.today()).first()
@@ -199,12 +213,13 @@ def rate_poi_status(db: Session, id: str, rating: bool, user_id: str):
         db_poi.balance -= 1
 
 
+    db_poi_addedby = db.query(models.POI).filter(models.POI.id == id).first()
 
-    if user_id != db_poi.added_by:
+    if user_id != db_poi_addedby.added_by:
         db_user = db.query(models.User).filter(models.User.id == user_id).first()
-        db_poi_addedby = db.query(models.User).filter(models.User.id == db_poi.added_by).first()
         db_user.total_xp += XP_STATUS_GIVEN
-        db_poi_addedby.total_xp += XP_STATUS_RECEIVED
+        db_poi_user_added = db.query(models.User).filter(models.User.id == db_poi_addedby.added_by).first()
+        db_poi_user_added.total_xp += XP_STATUS_RECEIVED
 
     db_user_poi.last_status_given = date.today()
 
