@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 import app.models as models, app.schemas as schemas
 from fastapi import HTTPException
 
+SEP = "__"
+
 def create_route(db: Session, route: schemas.RouteCreate, added_by: str):
 
     #check if route with same name exists
@@ -9,9 +11,9 @@ def create_route(db: Session, route: schemas.RouteCreate, added_by: str):
     if db_route is not None:
 
         if(db_route.added_by == added_by):
-            print(len(route.name.split("-")))
+            print(len(route.name.split(SEP)))
             print(len(route.points))
-            if(len(route.name.split("-")) == len(route.points)):
+            if(len(route.name.split(SEP)) == len(route.points)):
                 db.delete(db_route)
                 db.commit()
 
@@ -63,7 +65,7 @@ def get_routes_by_user(db: Session, user_id: str):
 
     #for each route get name
     for route in routes:
-        names = route.name.split("-")
+        names = route.name.split(SEP)
         points = route.points
         if(len(names) == len(points)):
             routes_create.append(schemas.RouteGet(id=str(route.id),name=route.name, points=points))
