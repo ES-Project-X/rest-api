@@ -50,6 +50,9 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ vars.AWS_SECRET_ACCESS_KEY }}
+          BUCKET_NAME: ${{ vars.BUCKET_NAME }}
           COGNITO_APP_CLIENT_ID: ${{ vars.COGNITO_APP_CLIENT_ID }}
           COGNITO_USERPOLL_ID: ${{ vars.COGNITO_USERPOLL_ID }}
           FRONTEND_URL: ${{ vars.FRONTEND_URL }}
@@ -62,7 +65,7 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build  --build-arg COGNITO_APP_CLIENT_ID=$COGNITO_APP_CLIENT_ID  --build-arg COGNITO_USERPOLL_ID=$COGNITO_USERPOLL_ID --build-arg FRONTEND_URL=$FRONTEND_URL --build-arg POSTGRES_DB=$POSTGRES_DB --build-arg POSTGRES_HOST=$POSTGRES_HOST --build-arg POSTGRES_PASSWORD=$POSTGRES_PASSWORD --build-arg POSTGRES_PORT=$POSTGRES_PORT --build-arg POSTGRES_USER=$POSTGRES_USER -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker build  --build-arg AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY BUCKET_NAME=$BUCKET_NAME COGNITO_APP_CLIENT_ID=$COGNITO_APP_CLIENT_ID  --build-arg COGNITO_USERPOLL_ID=$COGNITO_USERPOLL_ID --build-arg FRONTEND_URL=$FRONTEND_URL --build-arg POSTGRES_DB=$POSTGRES_DB --build-arg POSTGRES_HOST=$POSTGRES_HOST --build-arg POSTGRES_PASSWORD=$POSTGRES_PASSWORD --build-arg POSTGRES_PORT=$POSTGRES_PORT --build-arg POSTGRES_USER=$POSTGRES_USER -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
 
