@@ -30,6 +30,9 @@ async def upload_to_s3(file: schemas.FileUpload, current_user: str, db: Session)
         # Convert UUID format to hex string
         file_name = str(unique_id).replace("-", "") + "." + image_type
 
+        print(file_name)
+        print(file.base64_image)
+
         image_data = base64.b64decode(file.base64_image)
         image_file = BytesIO(image_data)
 
