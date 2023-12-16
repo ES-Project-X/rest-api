@@ -92,13 +92,3 @@ def get_route(db: Session, id: str):
     if db_route is None:
         raise HTTPException(status_code=404, detail="Route not found")
     return db_route
-
-def delete_all_routes(db: Session):
-    db_routes = db.query(models.Route).all()
-    if db_routes is None:
-        raise HTTPException(status_code=404, detail="Routes not found")
-    else:
-        for route in db_routes:
-            db.delete(route)
-        db.commit()
-        return {"message": "All routes deleted"}
