@@ -19,3 +19,7 @@ async def get_route(current_user: User = Depends(get_current_user), db: Session 
 @router.get("/delete_all")
 async def delete_all_routes(db: Session = Depends(get_db)):
     return route_crud.delete_all_routes(db=db)
+
+@router.delete("/delete/{id}")
+async def delete_route(id : str, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    return route_crud.delete_route(db=db, id=id, user_id=current_user.id)

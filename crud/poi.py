@@ -35,7 +35,19 @@ def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
         db.refresh(db_user)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-    return db_poi
+
+    return {
+        "id": db_poi.id,
+        "latitude": db_poi.latitude,
+        "longitude": db_poi.longitude,
+        "name": db_poi.name,
+        "description": db_poi.description,
+        "type": db_poi.type,
+        "added_by": db_poi.added_by,
+        "picture_url": db_poi.picture_url,
+        "rating_positive": db_poi.rating_positive,
+        "rating_negative": db_poi.rating_negative,
+    }
 
 def get_poi(db: Session, poi_id: str, user_id: str = None):
     db_poi = db.query(models.POI).filter(models.POI.id == poi_id).first()
