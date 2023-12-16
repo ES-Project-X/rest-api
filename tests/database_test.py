@@ -1,31 +1,24 @@
-from testcontainers.mysql import MySqlContainer
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from app.models import Base
-from app.database import get_db
-from main import app
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-def postgres_container():
-    container = MySqlContainer("mysql:latest")
-    container.start()
-    print(container.get_connection_url())
-    yield container
-    container.stop()
+# Use the environment variables from the .env file for your test database
+TEST_POSTGRES_DB = "test_db"
+TEST_POSTGRES_USER = "test_user"
+TEST_POSTGRES_PASSWORD = "test_password"
+TEST_POSTGRES_HOST = "localhost"
+TEST_POSTGRES_PORT = "5430"
 
-container = next(postgres_container())
-engine = create_engine(container.get_connection_url())
+# Define the TEST PostgreSQL connection URL
+TEST_SQLALCHEMY_DATABASE_URL = f"postgresql://{TEST_POSTGRES_USER}:{TEST_POSTGRES_PASSWORD}@{TEST_POSTGRES_HOST}:{TEST_POSTGRES_PORT}/{TEST_POSTGRES_DB}"
 
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+test_engine = create_engine(TEST_SQLALCHEMY_DATABASE_URL)
+TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
-Base.metadata.create_all(bind=engine)
+TestBase = declarative_base()
 
-def override_get_db():
-    db = TestingSessionLocal()
+def get_test_db():
+    db = TestSessionLocal()
     try:
         yield db
     finally:
         db.close()
-
-app.dependency_overrides[get_db] = override_get_db
-
-

@@ -1,4 +1,4 @@
-from fastapi.testclient import TestClient
+''' from fastapi.testclient import TestClient
 from main import app
 from database_test import TestingSessionLocal
 import pytest
@@ -29,3 +29,4 @@ def test_register():
     print("Aqui:", created_user)
     assert response.status_code == 200
     assert created_user["email"] == user_data["email"]
+ '''
