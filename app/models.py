@@ -26,7 +26,7 @@ class User(Base):
     cognito_id = Column(String, unique=True, nullable=False, index=True)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
-    image_url = Column(String, default="https://img.myloview.com/stickers/default-avatar-profile-icon-vector-social-media-user-photo-700-205577532.jpg")
+    image_url = Column(String, default="https://img.myloview.com/stickers/default-avatar-profile-icon-vector-social-media-user-photo-700-205577532.jpg", unique=True)
     created_at = Column(Date, default=date.today())
     total_xp = Column(Integer, default=0)
     birth_date = Column(Date, nullable=False)
@@ -50,7 +50,7 @@ class POI(Point):
     description = Column(String, nullable=False)
     type = Column(String, nullable=False)
     added_by = Column(UUID, ForeignKey("users.id"), nullable=False, index=True)
-    picture_url = Column(String, nullable=False)
+    picture_url = Column(String, nullable=False, unique=True)
     rating_positive = Column(Integer, default=1)
     rating_negative = Column(Integer, default=0)
 

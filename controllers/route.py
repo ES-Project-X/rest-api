@@ -15,3 +15,7 @@ async def create_route(route: schemas.RouteCreate, current_user: User = Depends(
 @router.get("/get")
 async def get_route(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     return route_crud.get_routes_by_user(db=db, user_id=current_user.id)
+
+@router.get("/delete_all")
+async def delete_all_routes(db: Session = Depends(get_db)):
+    return route_crud.delete_all_routes(db=db)
