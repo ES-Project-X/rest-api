@@ -8,6 +8,7 @@ import app.schemas as schemas
 
 router = APIRouter(prefix="/s3", tags=["Upload to S3"])
 
+
 @router.post("/upload")
 async def upload_to_s3(image: schemas.FileUpload, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # receive poi data by body raw json
