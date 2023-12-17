@@ -25,8 +25,7 @@ async def upload_to_s3(file: schemas.FileUpload, _: str):
     unique_id = uuid.uuid4()
     # Convert UUID format to hex string
     file_name = str(unique_id).replace("-", "") + "." + image_type
-    base64_image = file.base64_image.split(",")[1]
-    image_data = base64.b64decode(base64_image)
+    image_data = base64.b64decode(file.base64_image)
     image_file = BytesIO(image_data)
     
     try:

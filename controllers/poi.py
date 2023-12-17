@@ -52,6 +52,6 @@ async def create_poi(poi: schemas.POICreate, current_user: User = Depends(get_cu
     # receive poi data by body raw json
     return crud_poi.create_poi(db, poi, current_user.id)
 
-@router.delete("/delete_all")
+@router.delete("/remove_all")
 async def remove_all_pois(db: Session = Depends(get_db)):
-    return crud_poi.delete_all(db)
+    return crud_poi.remove_all(db)
