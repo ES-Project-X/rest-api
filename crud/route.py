@@ -5,7 +5,7 @@ import re
 
 SEP = "__"
 
-PATTERN = re.compile(r"^-?\d{1,3}\.\d{6},-?\d{1,3}\.\d{6}$")
+PATTERN = re.compile(r'^-?\d{1,3}\.\d{1,7},-?\d{1,3}\.\d{1,7}$') # change 7 to 6
 
 def create_route(db: Session, route: schemas.RouteCreate, added_by: str):
     db_route = models.Route(name=route.name,
@@ -30,11 +30,8 @@ def create_route(db: Session, route: schemas.RouteCreate, added_by: str):
     if len(points) == 0:
         raise HTTPException(status_code=400, detail="Invalid points")
 
-    try:
-        db.add_all(points)
-        db.commit()
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    db.add_all(points)
+    db.commit()
 
     db.commit()
     db.refresh(db_route)
