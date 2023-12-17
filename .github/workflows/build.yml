@@ -34,9 +34,9 @@ jobs:
       
       - name: Wait for Docker Compose file to start
         run: |
-          while ! docker exec test-postgres-container pg_isready -h localhost -p 5430 > /dev/null 2>&1;
-          do 
-            sleep 1; 
+          while [ "$(docker-compose -f docker-compose.yml ps -q test-postgres-container | grep -c Up)" -eq 0 ];
+          do
+            sleep 1;
           done
       
       - name: Run tox
