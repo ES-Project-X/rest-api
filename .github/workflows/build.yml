@@ -15,7 +15,7 @@ jobs:
         python-version: [ "3.11" ]
     services:
       test-postgres-container:
-        image: postgres
+        image: postgres:latest
         env:
           POSTGRES_HOST: localhost
           POSTGRES_USER: test_user
@@ -42,8 +42,8 @@ jobs:
           
       - name: Check postgres connection
         run: |
-            until pg_isready -h localhost -p 5430 -U test_user; do
-              >&2 echo "Postgres is unavailable - sleeping"
+            until pg_isready -h localhost -p 5432 -U test_user; do
+             >&2 echo "Postgres is unavailable - sleeping"
               sleep 1
             done
             >&2 echo "Postgres is up - executing command"
