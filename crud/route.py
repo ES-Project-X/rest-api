@@ -67,7 +67,7 @@ def get_routes_by_user(db: Session, user_id: str):
     if len(routes_create) > 5:
         routes_create = routes_create[-5:]
 
-    return {'created' : routes_create, 'recorded': routes_recorded}
+    return {'created' : routes_create.reverse(), 'recorded': routes_recorded.reverse()}
 
 def delete_route(db: Session, id: str, user_id: str):
     db_route = db.query(models.Route).filter(models.Route.id == id).first()
