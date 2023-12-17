@@ -28,7 +28,17 @@ jobs:
         run: |
             python -m pip install --upgrade pip
             pip install tox
-
+      
+      - name: Run Docker Compose file
+        run: docker-compose -f docker-compose.yml up -d
+      
+      - name: Wait for Docker Compose file to start
+        run: |
+          while ! docker exec test-postgres-container curl -s http://localhost:5430 > /dev/null; 
+          do 
+            sleep 1; 
+          done
+      
       - name: Run tox
         run: tox -e py
 
