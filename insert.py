@@ -53,7 +53,7 @@ def insert_data():
         name="testpoint3",
         description="testdesc3",
         type="drinking-water",
-        picture_url="https://img.freepik.com/fotos-premium/bebedouro-de-rua_321831-4277.jpg"
+        picture_url="https://project-x-storage.s3.amazonaws.com/b29e85cd69f1477090217541269e21c4.jpg"
     ), id_user)
 
     crud_poi.create_poi(db, schemas.POICreate(
