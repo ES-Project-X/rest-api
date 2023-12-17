@@ -17,7 +17,7 @@ services:
     container_name: test-postgres-container
     restart: always
     ports:
-      - "5430:5430"
+      - "5433:5433"
     environment:
       POSTGRES_DB: test_db
       POSTGRES_USER: test_user

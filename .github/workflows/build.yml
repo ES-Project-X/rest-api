@@ -22,7 +22,7 @@ jobs:
           POSTGRES_PASSWORD: test_password
           POSTGRES_DB: test_db
         ports:
-          - 5431:5431
+          - 5433:5433
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +42,7 @@ jobs:
           
       - name: Check postgres connection
         run: |
-            until pg_isready -h localhost -p 5431 -U test_user; do
+            until pg_isready -h localhost -p 5433 -U test_user; do
              >&2 echo "Postgres is unavailable - sleeping"
               sleep 1
             done
