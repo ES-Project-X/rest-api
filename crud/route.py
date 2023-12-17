@@ -5,7 +5,7 @@ import re
 
 SEP = "__"
 
-PATTERN = re.compile(r'^-?\d{1,3}\.\d{1,7},-?\d{1,3}\.\d{1,7}$') # change 7 to 6
+PATTERN = re.compile(r'^-?\d{1,3}\.\d{1,6},-?\d{1,3}\.\d{1,6}$')
 
 def create_route(db: Session, route: schemas.RouteCreate, added_by: str):
     db_route = models.Route(name=route.name,
