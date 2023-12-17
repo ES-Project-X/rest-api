@@ -9,13 +9,6 @@ XP_STATUS_GIVEN=50
 XP_STATUS_RECEIVED=5
 XP_CREATED_POI=50
 
-def remove_all(db: Session):
-    db.query(models.Status).delete()
-    db.query(models.UserPOI).delete()
-    db.query(models.POI).delete()
-    db.commit()
-    return {"msg": "All POIs removed"}
-
 def create_poi(db: Session, poi: schemas.POICreate, added_by: str):
     db_poi = models.POI(latitude=poi.latitude,
                         longitude=poi.longitude,

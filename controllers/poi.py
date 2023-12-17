@@ -51,7 +51,3 @@ async def rate_poi_status(poi: schemas.POIRate, current_user: User = Depends(get
 async def create_poi(poi: schemas.POICreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # receive poi data by body raw json
     return crud_poi.create_poi(db, poi, current_user.id)
-
-@router.delete("/remove_all")
-async def remove_all_pois(db: Session = Depends(get_db)):
-    return crud_poi.remove_all(db)
