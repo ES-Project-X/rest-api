@@ -1,8 +1,6 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_cognito import CognitoToken
 from app.database import engine
-from app.cognito import cognito_eu
 from controllers import auth, user, poi, route, file
 import os
 
