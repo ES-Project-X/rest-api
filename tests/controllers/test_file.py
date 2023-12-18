@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 import pytest
 from sqlalchemy import create_engine
 import sys
+sys.path.append(".")
 from main import app
 from sqlalchemy.orm import sessionmaker
 from app.models import User
