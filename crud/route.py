@@ -22,8 +22,8 @@ def create_route(db: Session, route: schemas.RouteCreate, added_by: str):
     for i in range(len(route.points)):
         if not PATTERN.match(route.points[i]):
             continue
-        db_point = models.Point(latitude=round(route.points[i].split(",")[0], 6),
-                                longitude=round(route.points[i].split(",")[1], 6))
+        db_point = models.Point(latitude=round(float(route.points[i].split(",")[0]), 6),
+                                longitude=round(float(route.points[i].split(",")[1]), 6))
         points.append(db_point)
         db_route.points.append(db_point)
 
