@@ -211,7 +211,7 @@ def rate_poi_status(db: Session, id: str, rating: bool, user_id: str):
 
     if db_poi is None:
         # create new status for this poi
-        db_poi = models.Status(poi_id=id)
+        db_poi = models.Status(poi_id=id, date=date.today())
         db.add(db_poi)
         db.commit()
         db.refresh(db_poi)

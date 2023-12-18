@@ -10,7 +10,3 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/register")
 async def register(user: schemas.UserCreate, db: Session = Depends(get_db), cognito_id: str = Depends(get_cognito_id)):
     return crud_user.create_user(db, user, cognito_id)
-
-@router.delete("/drop_database")
-async def drop_database(db: Session = Depends(get_db)):
-    return crud_user.drop_models(db)
