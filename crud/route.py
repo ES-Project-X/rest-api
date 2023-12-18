@@ -5,7 +5,7 @@ import re
 
 SEP = "__"
 
-PATTERN = re.compile(r'^-?\d{1,3}\.\d{1,6},-?\d{1,3}\.\d{1,6}$')
+PATTERN = re.compile(r'^-?\d{1,3}\.\d{1,},-?\d{1,3}\.\d{1,}$')
 
 def create_route(db: Session, route: schemas.RouteCreate, added_by: str):
     db_route = models.Route(name=route.name,
@@ -22,8 +22,8 @@ def create_route(db: Session, route: schemas.RouteCreate, added_by: str):
     for i in range(len(route.points)):
         if not PATTERN.match(route.points[i]):
             continue
-        db_point = models.Point(latitude=route.points[i].split(",")[0],
-                                longitude=route.points[i].split(",")[1])
+        db_point = models.Point(latitude=round(route.points[i].split(",")[0], 6),
+                                longitude=round(route.points[i].split(",")[1], 6))
         points.append(db_point)
         db_route.points.append(db_point)
 
