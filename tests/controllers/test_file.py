@@ -6,6 +6,7 @@ from app.models import User
 from sqlalchemy.orm import sessionmaker
 from main import app
 from datetime import date
+from tests.database_test import TestSessionLocal
 from unittest.mock import patch
 import json
 from uuid import uuid4
@@ -26,6 +27,16 @@ COGNITO_CLIENT_ID = os.environ.get("COGNITO_APP_CLIENT_ID")
 COGNITO_USER_POOL_ID = os.environ.get("COGNITO_USERPOLL_ID")
 USERNAME = "kokid46398@rdluxe.com"
 PASSWORD = "Sus@naAgui4r"
+
+
+@pytest.fixture(scope="module", autouse=True)
+def load_data():
+    db = TestSessionLocal()
+    # TODO CLEAR DATABASE
+    user = User(id=uuid4(), email="kokid46398@rdluxe.com", username="kokid46398", cognito_id="bffca13b-941f-40e3-ba60-29f620b17266", first_name="Kokid",
+                last_name="46398", birth_date=date.today())
+    db.commit()
+    db.close()
 
 
 def login():

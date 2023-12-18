@@ -32,6 +32,7 @@ cognito_eu = CognitoAuth(
 )
     
 def get_current_user(token: CognitoToken = Depends(cognito_eu.auth_required), db: Session = Depends(get_db)) -> str:
+    print("OLA1")
     return db.query(models.User).filter(models.User.cognito_id == token.cognito_id).first()
 
 def get_current_user_or_none(token: CognitoToken = Depends(cognito_eu.auth_optional), db: Session = Depends(get_db)) -> str:
@@ -41,4 +42,5 @@ def get_current_user_or_none(token: CognitoToken = Depends(cognito_eu.auth_optio
         return None
 
 def get_cognito_id(token: CognitoToken = Depends(cognito_eu.auth_required)) -> str:
+    print("OLA2")
     return token.cognito_id
