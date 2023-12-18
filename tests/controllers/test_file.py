@@ -6,7 +6,6 @@ from app.models import User
 from sqlalchemy.orm import sessionmaker
 from main import app
 from datetime import date
-from tests.database_test import TestSessionLocal
 from unittest.mock import patch
 import json
 from uuid import uuid4
@@ -17,6 +16,8 @@ import sys
 import os
 import boto3
 from dotenv import load_dotenv
+
+db = get_db()
 
 sys.path.append(".")
 
@@ -31,7 +32,6 @@ PASSWORD = "Sus@naAgui4r"
 
 @pytest.fixture(scope="module", autouse=True)
 def load_data():
-    db = TestSessionLocal()
     # TODO CLEAR DATABASE
     user = User(id=uuid4(), email="kokid46398@rdluxe.com", username="kokid46398", cognito_id="bffca13b-941f-40e3-ba60-29f620b17266", first_name="Kokid",
                 last_name="46398", birth_date=date.today())

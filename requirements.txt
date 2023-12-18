@@ -10,4 +10,4 @@ fastapi-cognito~=2.4.2
 testcontainers~=3.7.1
 pymysql~=1.1.0
 boto3~=1.33.11
-python-multipart~=0.0.6
+testcontainers~=3.7.1

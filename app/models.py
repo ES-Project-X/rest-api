@@ -4,8 +4,6 @@ from app.database import Base
 from datetime import date
 from uuid import uuid4
 
-# TODO: Implement cascade(?)
-
 route_point = Table("route_point", Base.metadata,
     Column("route_id", UUID, ForeignKey("routes.id"), nullable=False, index=True),
     Column("point_id", UUID, ForeignKey("points.id"), nullable=False, index=True),

@@ -1,24 +1,46 @@
+from app.database import Base
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from testcontainers.core.waiting_utils import wait_for_logs
+from testcontainers.postgres import PostgresContainer
 
 # Use the environment variables from the .env file for your test database
 TEST_POSTGRES_DB = "test_db"
 TEST_POSTGRES_USER = "test_user"
 TEST_POSTGRES_PASSWORD = "test_password"
-TEST_POSTGRES_HOST = "localhost"
-TEST_POSTGRES_PORT = "5430"
+TEST_POSTGRES_PORT = "5432"
 
-# Define the TEST PostgreSQL connection URL
-TEST_SQLALCHEMY_DATABASE_URL = f"postgresql://{TEST_POSTGRES_USER}:{TEST_POSTGRES_PASSWORD}@{TEST_POSTGRES_HOST}:{TEST_POSTGRES_PORT}/{TEST_POSTGRES_DB}"
+# Create a test database container
+postgres_container = PostgresContainer("postgres:13.2-alpine",
+                                       dbname=TEST_POSTGRES_DB,
+                                       user=TEST_POSTGRES_USER,
+                                       password=TEST_POSTGRES_PASSWORD,
+                                       port=TEST_POSTGRES_PORT)
 
-test_engine = create_engine(TEST_SQLALCHEMY_DATABASE_URL)
-TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
+# Start the container
+postgres_container.start()
 
-TestBase = declarative_base()
+# Wait for the container to start
+wait_for_logs(postgres_container, "database system is ready to accept connections")
 
-def get_test_db():
-    db = TestSessionLocal()
+# Get the host port
+postgres_port = postgres_container.get_exposed_port(TEST_POSTGRES_PORT)
+
+# Create the database engine
+engine = create_engine(f"postgresql://{TEST_POSTGRES_USER}:{TEST_POSTGRES_PASSWORD}@"
+                       f"localhost:{postgres_port}/{TEST_POSTGRES_DB}")
+
+# Create the test database tables
+Base.metadata.create_all(bind=engine)
+
+# Create a test database session
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Create a test database session
+def get_db():
+    db = TestingSessionLocal()
     try:
         yield db
     finally:
         db.close()
+

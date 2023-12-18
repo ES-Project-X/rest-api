@@ -1,8 +1,5 @@
 import pytest
-import sys
 from fastapi.testclient import TestClient
-
-from tests.database_test import get_test_db
 from main import app
 
 
