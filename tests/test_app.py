@@ -17,7 +17,8 @@ def test_read_main():
 from app.models import POI
 
 # ModuleNotFoundError: No module named 'database_test' ???
-from database_test import get_test_db
+
+from tests.database_test import get_test_db
 
 
 @pytest.fixture
