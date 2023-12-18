@@ -14,14 +14,15 @@ test.db
 log.txt
 Pipfile.lock
 env3.*
-env
 docs_build
 site_build
-venv
+*venv
 docs.zip
 archive.zip
 rest-api.iml
 .tox
+.env
+.aws
 
 # vim temporary files
 *~
