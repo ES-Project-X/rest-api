@@ -33,7 +33,7 @@ def login():
     client = boto3.client('cognito-idp', region_name=REGION_NAME)
 
     # Obter tokens
-    response = client.admin_initiate_auth(
+    response = client.initiate_auth(
         AuthFlow='USER_PASSWORD_AUTH',
         ClientId=COGNITO_CLIENT_ID,
         AuthParameters={
@@ -55,7 +55,6 @@ client = TestClient(app)
 def test_upload_to_s3():
     file_upload = {"base64_image": "base64encoding", "image_type": "image/png"}
     token = login()
-    print(token)
 
     response = client.post("/s3/upload", json=file_upload,
                            headers={"Authorization": f"Bearer {token}"})
